@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## View the app
+
+**Live site (after enabling GitHub Pages):** [https://figmaguru.github.io/MealTime](https://figmaguru.github.io/MealTime)
+
+To enable it: repo **Settings → Pages → Build and deployment → Source:** choose **GitHub Actions**. The workflow runs on every push to `main` and deploys the static export there.
+
 ## Getting Started
 
 First, run the development server:
