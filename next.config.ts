@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 // For GitHub Pages: use repo name. Use '' if deploying to username.github.io (user site).
-const basePath = "/mealtime";
+const basePath = "/MealTime";
 
 const nextConfig: NextConfig = {
   output: "export",
