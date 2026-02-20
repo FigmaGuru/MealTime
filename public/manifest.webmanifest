@@ -43,5 +43,5 @@
       "url": "/MealTime/app/meals",
       "icons": [{ "src": "/MealTime/icons/shortcut-meals.png", "sizes": "96x96", "type": "image/png" }]
     }
-  ],
+  ]
 }
