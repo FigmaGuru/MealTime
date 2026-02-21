@@ -1,12 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.mealtime.app",
-      "sha256_cert_fingerprints": [
-        "REPLACE_WITH_SHA256_FROM_PWABUILDER"
-      ]
-    }
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.mealtime.app",
+    "sha256_cert_fingerprints": ["9E:2E:96:23:0F:C0:BF:3C:3B:73:28:21:F2:16:F7:B4:CE:A6:97:50:0B:8D:65:13:E4:51:B1:4A:7E:44:31:51"]
   }
-]
+}]
