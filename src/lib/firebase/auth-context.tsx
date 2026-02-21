@@ -32,7 +32,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Handle redirect result from mobile Google sign-in
     handleGoogleRedirectResult().catch(() => {});
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Mark auth as determined immediately — loading reflects auth state,
+      // not the family-link lookup that follows.
       setUser(firebaseUser);
+      setLoading(false);
       if (firebaseUser) {
         // Check if this user is family-linked to another user's data
         try {
@@ -51,7 +54,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setDataUid(null);
       }
-      setLoading(false);
     });
     return unsubscribe;
   }, []);
