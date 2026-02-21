@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UtensilsCrossed } from "lucide-react";
@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { signInWithEmail, signInWithGoogle } from "@/lib/firebase/auth";
 import { getAuthErrorMessage } from "@/lib/utils/error-messages";
+import { useAuth } from "@/lib/firebase/auth-context";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -19,6 +20,13 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/app");
+    }
+  }, [user, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,7 +34,7 @@ export default function SignInPage() {
     setLoading(true);
     try {
       await signInWithEmail(email, password);
-      router.push("/app");
+      // Redirect is handled by the useEffect above once auth state updates
     } catch (err) {
       setError(getAuthErrorMessage(err));
     } finally {
@@ -39,7 +47,7 @@ export default function SignInPage() {
     setLoading(true);
     try {
       await signInWithGoogle();
-      router.push("/app");
+      // Redirect is handled by the useEffect above once auth state updates
     } catch (err) {
       setError(getAuthErrorMessage(err));
     } finally {
