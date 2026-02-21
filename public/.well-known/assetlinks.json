@@ -2,7 +2,7 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "com.mealtime.app",
-    "sha256_cert_fingerprints": ["9E:2E:96:23:0F:C0:BF:3C:3B:73:28:21:F2:16:F7:B4:CE:A6:97:50:0B:8D:65:13:E4:51:B1:4A:7E:44:31:51"]
+    "package_name": "io.github.figmaguru.mealtime",
+    "sha256_cert_fingerprints": ["F9:E8:AA:44:08:13:03:5E:3B:05:1C:09:AF:78:9C:FB:62:CE:DD:13:02:9A:A3:6C:6C:46:26:2C:6D:BC:29:ED"]
   }
 }]
