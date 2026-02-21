@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { startOfWeek, subWeeks, format } from "date-fns";
+import { toast } from "sonner";
 import { UtensilsCrossed, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MonthCalendar } from "@/components/dashboard/month-calendar";
@@ -139,8 +140,13 @@ export default function DashboardPage() {
     setGenerateOpen(true);
   }
 
-  function handleApplyGeneratedPlan(generatedDays: DayPlan[]) {
-    updateDays(generatedDays);
+  async function handleApplyGeneratedPlan(generatedDays: DayPlan[]) {
+    try {
+      await updateDays(generatedDays);
+      toast.success("Meal plan updated");
+    } catch {
+      // Error toast is already shown by useWeeklyPlan
+    }
   }
 
   return (

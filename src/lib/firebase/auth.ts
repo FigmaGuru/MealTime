@@ -3,6 +3,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   updateProfile,
@@ -38,7 +40,29 @@ export async function signUpWithEmail(
 
 export async function signInWithGoogle() {
   if (!auth || !db) throw new Error("Firebase not initialized");
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    await signInWithRedirect(auth, googleProvider);
+    return;
+  }
   const credential = await signInWithPopup(auth, googleProvider);
+  const userDoc = doc(db, "users", credential.user.uid);
+  await setDoc(
+    userDoc,
+    {
+      displayName: credential.user.displayName ?? "",
+      email: credential.user.email ?? "",
+      createdAt: Date.now(),
+    },
+    { merge: true }
+  );
+  return credential;
+}
+
+export async function handleGoogleRedirectResult() {
+  if (!auth || !db) return null;
+  const credential = await getRedirectResult(auth);
+  if (!credential) return null;
   const userDoc = doc(db, "users", credential.user.uid);
   await setDoc(
     userDoc,

@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import type { Meal, MealSuggestion } from "@/types";
 import { buildMealContext } from "@/lib/utils/meal-context";
+import { generateSuggestions } from "@/lib/openai/services";
 
 export function useSuggestions() {
   const [suggestions, setSuggestions] = useState<MealSuggestion[]>([]);
@@ -19,22 +20,12 @@ export function useSuggestions() {
     setLoading(true);
     try {
       const mealContext = buildMealContext(meals);
-      const res = await fetch("/api/suggestions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mealContext,
-          count,
-          previousSuggestionTitles: [...previousTitlesRef.current],
-        }),
-      });
+      const newSuggestions = await generateSuggestions(
+        mealContext,
+        count,
+        [...previousTitlesRef.current]
+      );
 
-      if (!res.ok) throw new Error("Failed to fetch suggestions");
-
-      const data = await res.json();
-      const newSuggestions: MealSuggestion[] = data.suggestions ?? [];
-
-      // Add new titles to the tracking ref
       for (const s of newSuggestions) {
         previousTitlesRef.current.add(s.title.toLowerCase().trim());
       }

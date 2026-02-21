@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import type { Meal } from "@/types";
+import { enrichMeal } from "@/lib/openai/services";
 
 export type EnrichmentResult = Pick<
   Meal,
@@ -25,16 +26,8 @@ export function useEnrichMeal() {
       setLoading(true);
       setTargetMealId(mealId);
       try {
-        const res = await fetch("/api/enrich", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, tags }),
-        });
-
-        if (!res.ok) throw new Error("Failed to enrich");
-
-        const data = await res.json();
-        setEnrichment(data.enrichment ?? null);
+        const result = await enrichMeal(title, tags);
+        setEnrichment(result as EnrichmentResult | null);
       } catch {
         toast.error("Failed to enrich meal with AI");
         setEnrichment(null);

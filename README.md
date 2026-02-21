@@ -1,10 +1,17 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## View the app
+## View the app (Firebase Hosting)
 
-**Live site (after enabling GitHub Pages):** [https://figmaguru.github.io/MealTime](https://figmaguru.github.io/MealTime)
+Deploy to get a shareable URL (e.g. `https://YOUR_PROJECT_ID.web.app`):
 
-To enable it: repo **Settings → Pages → Build and deployment → Source:** choose **GitHub Actions**. The workflow runs on every push to `main` and deploys the static export there.
+1. Install Firebase CLI: `npm install -g firebase-tools`
+2. Log in: `firebase login`
+3. **Select your Firebase project** (use the same one as in your app):  
+   `firebase use YOUR_PROJECT_ID`  
+   Replace `YOUR_PROJECT_ID` with your Firebase project name (the value from `.env.local` → `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, or from [Firebase Console](https://console.firebase.google.com) → project settings).
+4. Build and deploy: `pnpm run deploy:firebase`
+
+Your live URL will be in the deploy output and in the [Firebase Console](https://console.firebase.google.com) → Hosting.
 
 ## Getting Started
 

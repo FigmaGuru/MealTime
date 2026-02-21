@@ -66,8 +66,12 @@ export default function PlanPage() {
   }
 
   async function handleApplyGeneratedPlan(generatedDays: DayPlan[]) {
-    await updateDays(generatedDays);
-    toast.success("Meal plan updated");
+    try {
+      await updateDays(generatedDays);
+      toast.success("Meal plan updated");
+    } catch {
+      // Error toast is already shown by useWeeklyPlan
+    }
   }
 
   return (

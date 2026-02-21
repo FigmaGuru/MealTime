@@ -26,31 +26,31 @@ function createEmptyDays(weekStartISO: string): DayPlan[] {
 }
 
 export function useWeeklyPlan(weekStartISO: string) {
-  const { user } = useAuth();
+  const { user, dataUid } = useAuth();
   const [plan, setPlan] = useState<WeeklyPlan | null>(null);
   const [loading, setLoading] = useState(true);
 
   const days = plan?.days ?? createEmptyDays(weekStartISO);
 
   useEffect(() => {
-    if (!user || !weekStartISO) {
+    if (!dataUid || !weekStartISO) {
       setPlan(null);
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    const unsubscribe = subscribePlan(user.uid, weekStartISO, (updated) => {
+    const unsubscribe = subscribePlan(dataUid, weekStartISO, (updated) => {
       setPlan(updated);
       setLoading(false);
     });
 
     return unsubscribe;
-  }, [user, weekStartISO]);
+  }, [dataUid, weekStartISO]);
 
   const updateDays = useCallback(
     async (newDays: DayPlan[]) => {
-      if (!user) return;
+      if (!dataUid) return;
       const prev = plan;
       setPlan((current) =>
         current
@@ -64,14 +64,14 @@ export function useWeeklyPlan(weekStartISO: string) {
             }
       );
       try {
-        await createOrUpdatePlan(user.uid, weekStartISO, newDays);
+        await createOrUpdatePlan(dataUid, weekStartISO, newDays);
       } catch (err) {
         if (prev) setPlan(prev);
         toast.error("Failed to update plan");
         throw err;
       }
     },
-    [user, weekStartISO, plan]
+    [dataUid, weekStartISO, plan]
   );
 
   const assignMealToDay = useCallback(

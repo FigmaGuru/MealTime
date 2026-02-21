@@ -15,12 +15,16 @@ export async function createOrUpdatePlan(
   if (!weekStartISO?.trim()) {
     throw new Error("weekStartISO is required for createOrUpdatePlan");
   }
+  // Strip undefined values — Firestore rejects them
+  const cleanDays = days.map((d) =>
+    Object.fromEntries(Object.entries(d).filter(([, v]) => v !== undefined))
+  );
   const planDoc = doc(requireDb(), "users", uid, "plans", weekStartISO);
   await setDoc(
     planDoc,
     {
       weekStartISO,
-      days,
+      days: cleanDays,
       updatedAt: Date.now(),
       createdAt: Date.now(),
     },

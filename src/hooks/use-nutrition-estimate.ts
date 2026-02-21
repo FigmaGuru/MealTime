@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { Ingredient, NutritionInfo } from "@/types";
+import { estimateNutrition } from "@/lib/openai/services";
 
 export function useNutritionEstimate() {
   const [nutrition, setNutrition] = useState<NutritionInfo | null>(null);
@@ -16,17 +17,9 @@ export function useNutritionEstimate() {
 
       setLoading(true);
       try {
-        const res = await fetch("/api/nutrition", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ingredients, servings }),
-        });
-
-        if (!res.ok) return null;
-
-        const data = await res.json();
-        setNutrition(data.nutrition ?? null);
-        return data.nutrition ?? null;
+        const result = await estimateNutrition(ingredients, servings);
+        setNutrition(result);
+        return result;
       } catch {
         return null;
       } finally {

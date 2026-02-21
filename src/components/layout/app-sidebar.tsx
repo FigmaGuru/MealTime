@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   ChevronsUpDown,
+  HelpCircle,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -23,6 +24,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -34,9 +36,10 @@ import {
 import { ThemeToggle } from "./theme-toggle";
 import { useAuth } from "@/lib/firebase/auth-context";
 import { logOut } from "@/lib/firebase/auth";
+import { useOnboardingActions } from "@/components/onboarding/onboarding-provider";
 
 const navItems = [
-  { href: "/app", label: "Home", icon: MessageCircle },
+  { href: "/app", label: "Chat", icon: MessageCircle },
   { href: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/app/meals", label: "Meals", icon: UtensilsCrossed },
   { href: "/app/settings", label: "Settings", icon: Settings },
@@ -45,6 +48,12 @@ const navItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { isMobile, setOpenMobile } = useSidebar();
+  const { reopen: reopenOnboarding } = useOnboardingActions();
+
+  const closeMobileSidebar = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   const initials = user?.displayName
     ? user.displayName
@@ -61,7 +70,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/app">
+              <Link href="/app" onClick={closeMobileSidebar}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <UtensilsCrossed className="size-4" />
                 </div>
@@ -82,12 +91,13 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
+                const normalizedPathname = pathname.replace(/\/$/, "") || "/";
                 const isActive =
                   item.href === "/app"
-                    ? pathname === "/app"
+                    ? normalizedPathname === "/app"
                     : item.href === "/app/dashboard"
-                      ? pathname === "/app/dashboard" || pathname.startsWith("/app/dashboard/")
-                      : pathname.startsWith(item.href);
+                      ? normalizedPathname === "/app/dashboard" || normalizedPathname.startsWith("/app/dashboard/")
+                      : normalizedPathname.startsWith(item.href);
                 return (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
@@ -95,7 +105,7 @@ export function AppSidebar() {
                       isActive={isActive}
                       tooltip={item.label}
                     >
-                      <Link href={item.href}>
+                      <Link href={item.href} onClick={closeMobileSidebar}>
                         <item.icon />
                         <span>{item.label}</span>
                       </Link>
@@ -113,6 +123,19 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem className="w-full">
             <ThemeToggle />
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Getting Started"
+              onClick={() => {
+                closeMobileSidebar();
+                reopenOnboarding();
+              }}
+              className="text-primary hover:text-primary"
+            >
+              <span>Getting Started</span>
+              <HelpCircle />
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
@@ -155,14 +178,17 @@ export function AppSidebar() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/app/settings" className="cursor-pointer">
+                  <Link href="/app/settings" className="cursor-pointer" onClick={closeMobileSidebar}>
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => logOut()}
+                  onClick={() => {
+                    closeMobileSidebar();
+                    logOut();
+                  }}
                   className="cursor-pointer text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />

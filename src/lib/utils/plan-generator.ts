@@ -92,11 +92,17 @@ export function generateWeeklyPlan(options: GeneratePlanOptions): DayPlan[] {
   const finalSelection = shuffle(selected);
 
   // Build day plans — only assign meals to selected days
+  // Avoid setting properties to `undefined` — Firestore rejects undefined values.
   const start = new Date(weekStartISO + "T00:00:00");
   let mealIndex = 0;
-  return Array.from({ length: 7 }, (_, i) => ({
-    dateISO: format(addDays(start, i), "yyyy-MM-dd"),
-    mealId: selectedDays[i] ? finalSelection[mealIndex++]?.id : undefined,
-    skipped: !selectedDays[i] ? true : undefined,
-  }));
+  return Array.from({ length: 7 }, (_, i) => {
+    const day: DayPlan = { dateISO: format(addDays(start, i), "yyyy-MM-dd") };
+    if (selectedDays[i]) {
+      const meal = finalSelection[mealIndex++];
+      if (meal) day.mealId = meal.id;
+    } else {
+      day.skipped = true;
+    }
+    return day;
+  });
 }
